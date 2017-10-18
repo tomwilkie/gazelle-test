@@ -1,0 +1,40 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_prefix")
+
+go_prefix("github.com/tomwilkie/gazelle-test")
+
+load("@io_bazel_rules_go//go:def.bzl", "gazelle")
+
+gazelle(
+    name = "gazelle",
+    external = "vendored",
+    prefix = "github.com/tomwilkie/gazelle-test",
+)
+
+go_library(
+    name = "go_default_library",
+    srcs = ["main.go"],
+    importpath = "github.com/tomwilkie/gazelle-test",
+    visibility = ["//visibility:private"],
+    deps = ["//vendor/github.com/openzipkin/zipkin-go-opentracing/_thrift/gen-go/zipkincore:go_default_library"],
+)
+
+go_binary(
+    name = "private",
+    importpath = "github.com/kausalco/private",
+    library = ":go_default_library",
+    visibility = ["//visibility:public"],
+)
+
+go_binary(
+    name = "test",
+    importpath = "github.com/kausalco/test",
+    library = ":go_default_library",
+    visibility = ["//visibility:public"],
+)
+
+go_binary(
+    name = "gazelle-test",
+    importpath = "github.com/tomwilkie/gazelle-test",
+    library = ":go_default_library",
+    visibility = ["//visibility:public"],
+)
